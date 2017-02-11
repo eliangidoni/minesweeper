@@ -5,11 +5,15 @@ import json
 
 class GameSerializer(serializers.ModelSerializer):
     board_view = serializers.SerializerMethodField()
+    state = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Game
         fields = ('id', 'title', 'state', 'board_view',
                   'duration_seconds', 'elapsed_seconds', 'score', 'resumed_timestamp', 'player')
+
+    def get_state(self, obj):
+        return obj.get_state_display()
 
     def get_board_view(self, obj):
         view = []

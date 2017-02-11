@@ -18,7 +18,7 @@ class GameViewSet(viewsets.ViewSet):
     """
     API endpoint to process game requests through the following actions.
 
-    - `state/`: **Returns** the game state. Arguments:
+    - `state/`: **Returns** the game object. Arguments:
         - game_id
     - `new/`: Creates a new game. **Returns** the game state. Arguments:
         - rows (number of rows)
@@ -40,6 +40,15 @@ class GameViewSet(viewsets.ViewSet):
         - game_id
         - x (cell index)
         - y (cell index)
+
+    The current `state` can be:
+
+    - **new** for a new game.
+    - **started** if the game is running.
+    - **paused** if the game is paused.
+    - **timeout** if the game finished by timeout.
+    - **won** if the player won the game.
+    - **lost** if the player lost the game.
 
     """
     # authentication_classes = (authentication.TokenAuthentication,)
