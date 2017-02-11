@@ -10,7 +10,7 @@ class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Game
         fields = ('id', 'title', 'state', 'board_view',
-                  'duration_seconds', 'elapsed_seconds', 'score', 'resumed_timestamp', 'player')
+                  'duration_seconds', 'elapsed_seconds', 'score', 'resumed_timestamp')
 
     def get_state(self, obj):
         return obj.get_state_display()
