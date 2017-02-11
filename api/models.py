@@ -16,12 +16,16 @@ class Game(models.Model):
     STATE_NEW = 0
     STATE_STARTED = 1
     STATE_PAUSED = 2
-    STATE_FINISHED = 3
+    STATE_TIMEOUT = 3
+    STATE_WON = 4
+    STATE_LOST = 5
     STATE_CHOICES = (
         (STATE_NEW, 'new'),
         (STATE_STARTED, 'started'),
         (STATE_PAUSED, 'paused'),
-        (STATE_FINISHED, 'finished'),
+        (STATE_TIMEOUT, 'timeout'),
+        (STATE_WON, 'won'),
+        (STATE_LOST, 'lost'),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -53,7 +57,7 @@ class Game(models.Model):
         return (x >= 0 and x < cols) and (y >= 0 and y < rows)
 
     @staticmethod
-    def _adjacent_points(x, y):
+    def _adjacent_points(rows, cols, x, y):
         up = (y - 1, x)
         down = (y + 1, x)
         left = (y, x - 1)
@@ -63,15 +67,15 @@ class Game(models.Model):
         lower_right = (y + 1, x + 1)
         lower_left = (y + 1, x - 1)
         points = [up, down, left, right, upper_left, upper_right, lower_left, lower_right]
-        return points
+        return [p for p in points if Game._inside_board(rows, cols, p)]
 
     @staticmethod
     def _fill_adjacent(board, rows, cols, x, y):
         if board[y][x] != 'x':
             return
-        for p in Game._adjacent_points(x, y):
+        for p in Game._adjacent_points(rows, cols, x, y):
             py, px = p
-            if Game._inside_board(rows, cols, p) and board[py][px] != 'x':
+            if board[py][px] != 'x':
                 board[py][px] = str(int(board[py][px]) + 1)
 
     @staticmethod
@@ -95,17 +99,30 @@ class Game(models.Model):
 
     def reveal_at(self, x, y):
         pboard = json.loads(self.player_board)
+        if pboard[y][x] == 'v':
+            return
         pboard[y][x] = 'v'
         self.player_board = json.dumps(pboard)
         board = json.loads(self.board)
+        rows, cols = len(board), len(board[0])
         if board[y][x] == '0':
-            for p in Game._adjacent_points(x, y):
+            for p in Game._adjacent_points(rows, cols, x, y):
                 py, px = p
                 self.reveal_at(px, py)
 
     def is_mine_at(self, x, y):
         board = json.loads(self.board)
         return (board[y][x] == 'x')
+
+    def is_all_revealed(self):
+        board = json.loads(self.board)
+        pboard = json.loads(self.player_board)
+        rows, cols = len(board), len(board[0])
+        for i in range(rows):
+            for j in range(cols):
+                if board[i][j] != 'x' and pboard[i][j] != 'v':
+                    return False
+        return True
 
     def mark_flag_at(self, x, y):
         board = json.loads(self.player_board)
