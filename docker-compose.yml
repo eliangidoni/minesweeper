@@ -1,0 +1,15 @@
+version: '2'
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=minesweeper
+  api:
+    build: .
+    command: python manage.py runserver 0.0.0.0:7000
+    volumes:
+      - .:/project
+    ports:
+      - "7000:7000"
+    depends_on:
+      - db
