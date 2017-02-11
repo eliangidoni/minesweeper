@@ -43,7 +43,8 @@ class GameViewSet(viewsets.ViewSet):
 
     """
     # authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
+    # permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
     def list(self, request, *args, **kwargs):
         return Response()
@@ -62,17 +63,18 @@ class GameViewSet(viewsets.ViewSet):
     def new(self, request, *args, **kwargs):
         serializer = GameNewSerializer(data=request.data)
         game = None
+        user = models.Player.objects.first()  # Hack to use a single user for now.
         if serializer.is_valid(raise_exception=True):
             rows = serializer.validated_data['rows']
             columns = serializer.validated_data['columns']
             mines = serializer.validated_data['mines']
             game = models.Game()
-            game.title = 'Game for user %s' % (request.user.first_name)
+            game.title = 'Game for user %s' % (user.first_name)
             board, player_board = models.Game.new_boards(rows, columns, mines)
             game.board = board
             game.player_board = player_board
             game.state = models.Game.STATE_NEW
-            game.player = request.user
+            game.player = user
             game.resumed_timestamp = timezone.now()
             game.save()
         serializer = GameSerializer(game, context={'request': request})
