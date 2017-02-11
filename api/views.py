@@ -16,7 +16,7 @@ from django.shortcuts import render
 
 class GameViewSet(viewsets.ViewSet):
     """
-    API endpoint to process game requests through the following actions.
+    JSON API endpoint to process game requests through the following actions.
 
     - `state/`: **Returns** the game object. Arguments:
         - game_id
@@ -43,12 +43,20 @@ class GameViewSet(viewsets.ViewSet):
 
     The current `state` can be:
 
-    - **new** for a new game.
-    - **started** if the game is running.
-    - **paused** if the game is paused.
-    - **timeout** if the game finished by timeout.
-    - **won** if the player won the game.
-    - **lost** if the player lost the game.
+    - **new** : for a new game.
+    - **started** : if the game is running.
+    - **paused** : if the game is paused.
+    - **timeout** : if the game finished by timeout.
+    - **won** : if the player won the game.
+    - **lost** : if the player lost the game.
+
+    The `board_view` is a matrix where each cell can be:
+
+    - an empty character if the user hasn't set a mark or revealed the cell.
+    - **?** : if the user set a question mark
+    - **!** : if the user set a red flag mark
+    - **x** : to indicate the cell has a mine.
+    - an integer (0-8) to indicate the number of adjacent mines to the cell.
 
     """
     # authentication_classes = (authentication.TokenAuthentication,)
