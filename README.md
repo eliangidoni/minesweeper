@@ -1,7 +1,7 @@
 # minesweeper
 
 Minesweeper game implementation as a JSON REST service.
-Implemented with Django REST framework.
+Implemented with Django REST framework and PostgreSQL.
 
 ##Development environment
 Requires Docker and Docker Composer. Scripts to create/start/stop the service are in `/scripts/`
