@@ -51,18 +51,15 @@ class GameResumeSerializer(serializers.Serializer):
 
 
 class GameMarkQuestionSerializer(serializers.Serializer):
-    game_id = serializers.CharField()
     x = serializers.IntegerField(min_value=0)
     y = serializers.IntegerField(min_value=0)
 
 
 class GameMarkFlagSerializer(serializers.Serializer):
-    game_id = serializers.CharField()
     x = serializers.IntegerField(min_value=0)
     y = serializers.IntegerField(min_value=0)
 
 
 class GameRevealSerializer(serializers.Serializer):
-    game_id = serializers.CharField()
     x = serializers.IntegerField(min_value=0)
     y = serializers.IntegerField(min_value=0)

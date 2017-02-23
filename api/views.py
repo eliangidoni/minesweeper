@@ -18,26 +18,20 @@ class GameViewSet(viewsets.ViewSet):
     """
     JSON API endpoint to process game requests through the following actions.
 
-    - `state/`: **Returns** the game object. Arguments:
-        - game_id
+    - `ID/state/`: **Returns** the game object.
     - `new/`: Creates a new game. **Returns** the game state. Arguments:
         - rows (number of rows)
         - columns (number of columns)
         - mines (number of mines, should be less than the board size)
-    - `pause/`: Pauses a given game (stops time tracking). **Returns** the game state. Arguments:
-        - game_id
-    - `resume/`: Resumes a given game (starts time tracking). **Returns** the game state. Arguments:
-        - game_id
-    - `mark_as_flag/`: Set a flag mark in a given cell. **Returns** the game state. Arguments:
-        - game_id
+    - `ID/pause/`: Pauses a given game (stops time tracking). **Returns** the game state.
+    - `ID/resume/`: Resumes a given game (starts time tracking). **Returns** the game state.
+    - `ID/mark_as_flag/`: Set a flag mark in a given cell. **Returns** the game state. Arguments:
         - x (cell index)
         - y (cell index)
-    - `mark_as_question/`: Set a question mark in a given cell. **Returns** the game state. Arguments:
-        - game_id
+    - `ID/mark_as_question/`: Set a question mark in a given cell. **Returns** the game state. Arguments:
         - x (cell index)
         - y (cell index)
-    - `reveal/`: Reveals a given cell. **Returns** the game state. Arguments:
-        - game_id
+    - `ID/reveal/`: Reveals a given cell. **Returns** the game state. Arguments:
         - x (cell index)
         - y (cell index)
 
@@ -66,13 +60,9 @@ class GameViewSet(viewsets.ViewSet):
     def list(self, request, *args, **kwargs):
         return Response()
 
-    @list_route(methods=['get'])
+    @detail_route(methods=['get'])
     def state(self, request, *args, **kwargs):
-        serializer = GameGetSerializer(data=request.query_params)
-        game = None
-        if serializer.is_valid(raise_exception=True):
-            gid = serializer.validated_data['game_id']
-            game = models.Game.objects.get(pk=gid)
+        game = self.get_object()
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data)
 
@@ -97,63 +87,49 @@ class GameViewSet(viewsets.ViewSet):
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data)
 
-    @list_route(methods=['post'])
+    @detail_route(methods=['post'])
     def pause(self, request, *args, **kwargs):
-        serializer = GamePauseSerializer(data=request.data)
-        game = None
-        if serializer.is_valid(raise_exception=True):
-            gid = serializer.validated_data['game_id']
-            game = models.Game.objects.get(pk=gid)
+        game = self.get_object()
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data)
 
-    @list_route(methods=['post'])
+    @detail_route(methods=['post'])
     def resume(self, request, *args, **kwargs):
-        serializer = GameResumeSerializer(data=request.data)
-        game = None
-        if serializer.is_valid(raise_exception=True):
-            gid = serializer.validated_data['game_id']
-            game = models.Game.objects.get(pk=gid)
+        game = self.get_object()
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data)
 
-    @list_route(methods=['post'])
+    @detail_route(methods=['post'])
     def mark_as_flag(self, request, *args, **kwargs):
         serializer = GameMarkFlagSerializer(data=request.data)
-        game = None
+        game = self.get_object()
         if serializer.is_valid(raise_exception=True):
-            gid = serializer.validated_data['game_id']
             x = serializer.validated_data['x']
             y = serializer.validated_data['y']
-            game = models.Game.objects.get(pk=gid)
             game.mark_flag_at(x, y)
             game.save()
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data)
 
-    @list_route(methods=['post'])
+    @detail_route(methods=['post'])
     def mark_as_question(self, request, *args, **kwargs):
         serializer = GameMarkQuestionSerializer(data=request.data)
-        game = None
+        game = self.get_object()
         if serializer.is_valid(raise_exception=True):
-            gid = serializer.validated_data['game_id']
             x = serializer.validated_data['x']
             y = serializer.validated_data['y']
-            game = models.Game.objects.get(pk=gid)
             game.mark_question_at(x, y)
             game.save()
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data)
 
-    @list_route(methods=['post'])
+    @detail_route(methods=['post'])
     def reveal(self, request, *args, **kwargs):
         serializer = GameRevealSerializer(data=request.data)
-        game = None
+        game = self.get_object()
         if serializer.is_valid(raise_exception=True):
-            gid = serializer.validated_data['game_id']
             x = serializer.validated_data['x']
             y = serializer.validated_data['y']
-            game = models.Game.objects.get(pk=gid)
             game.reveal_at(x, y)
             if game.is_mine_at(x, y):
                 game.state = models.Game.STATE_LOST
