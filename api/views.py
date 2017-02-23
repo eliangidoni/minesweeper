@@ -60,6 +60,12 @@ class GameViewSet(viewsets.ViewSet):
     def list(self, request, *args, **kwargs):
         return Response()
 
+    def get_object(self, pk):
+        try:
+            return models.Game.objects.get(pk=pk)
+        except:
+            raise APIException(404)
+
     @detail_route(methods=['get'])
     def state(self, request, *args, **kwargs):
         game = self.get_object()
@@ -89,7 +95,7 @@ class GameViewSet(viewsets.ViewSet):
 
     @detail_route(methods=['post'])
     def pause(self, request, pk=None):
-        game = self.get_object()
+        game = self.get_object(pk)
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data)
 
