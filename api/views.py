@@ -67,8 +67,8 @@ class GameViewSet(viewsets.ViewSet):
             raise APIException(404)
 
     @detail_route(methods=['get'])
-    def state(self, request, *args, **kwargs):
-        game = self.get_object()
+    def state(self, request, pk=None):
+        game = self.get_object(pk)
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data)
 
@@ -100,15 +100,15 @@ class GameViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     @detail_route(methods=['post'])
-    def resume(self, request, *args, **kwargs):
-        game = self.get_object()
+    def resume(self, request, pk=None):
+        game = self.get_object(pk)
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data)
 
     @detail_route(methods=['post'])
-    def mark_as_flag(self, request, *args, **kwargs):
+    def mark_as_flag(self, request, pk=None):
         serializer = GameMarkFlagSerializer(data=request.data)
-        game = self.get_object()
+        game = self.get_object(pk)
         if serializer.is_valid(raise_exception=True):
             x = serializer.validated_data['x']
             y = serializer.validated_data['y']
@@ -118,9 +118,9 @@ class GameViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     @detail_route(methods=['post'])
-    def mark_as_question(self, request, *args, **kwargs):
+    def mark_as_question(self, request, pk=None):
         serializer = GameMarkQuestionSerializer(data=request.data)
-        game = self.get_object()
+        game = self.get_object(pk)
         if serializer.is_valid(raise_exception=True):
             x = serializer.validated_data['x']
             y = serializer.validated_data['y']
@@ -130,9 +130,9 @@ class GameViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     @detail_route(methods=['post'])
-    def reveal(self, request, *args, **kwargs):
+    def reveal(self, request, pk=None):
         serializer = GameRevealSerializer(data=request.data)
-        game = self.get_object()
+        game = self.get_object(pk)
         if serializer.is_valid(raise_exception=True):
             x = serializer.validated_data['x']
             y = serializer.validated_data['y']
