@@ -88,7 +88,7 @@ class GameViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     @detail_route(methods=['post'])
-    def pause(self, request, *args, **kwargs):
+    def pause(self, request, pk=None):
         game = self.get_object()
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data)
