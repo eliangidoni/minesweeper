@@ -8,16 +8,16 @@ There is a Go client library in https://github.com/eliangidoni/minesweepergo
 - Time tracking.
 - Multiple user accounts
 
-##Development environment
+## Development environment
 Requires Docker and Docker Composer. Scripts to create/start/stop the service are in `/scripts/`
 
-##First Run
+## First Run
 ```
 python manage.py migrate auth
 python manage.py migrate
 python manage.py createsuperuser
 ```
-##Service start
+## Service start
 ```
 python manage.py runserver
 ```
