@@ -4,7 +4,7 @@ Minesweeper game implementation as a JSON REST service.
 Implemented with Django REST framework and PostgreSQL.
 
 There is a Go client library in https://github.com/eliangidoni/minesweepergo
-##Missing features##
+## Missing features
 - Time tracking.
 - Multiple user accounts
 
